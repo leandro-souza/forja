@@ -1,0 +1,1 @@
+package org.springframework.http; public class CacheControl { public static CacheControl maxAge(long a, java.util.concurrent.TimeUnit u){return new CacheControl();} public CacheControl cachePublic(){return this;} }

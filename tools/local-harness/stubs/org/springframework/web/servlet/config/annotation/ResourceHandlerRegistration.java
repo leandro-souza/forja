@@ -1,0 +1,1 @@
+package org.springframework.web.servlet.config.annotation; public class ResourceHandlerRegistration { public ResourceHandlerRegistration addResourceLocations(String... p){return this;} public ResourceHandlerRegistration setCacheControl(org.springframework.http.CacheControl c){return this;} }

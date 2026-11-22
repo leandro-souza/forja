@@ -1,0 +1,1 @@
+package org.springframework.web.servlet.config.annotation; public class ResourceHandlerRegistry { public ResourceHandlerRegistration addResourceHandler(String... p){return new ResourceHandlerRegistration();} }

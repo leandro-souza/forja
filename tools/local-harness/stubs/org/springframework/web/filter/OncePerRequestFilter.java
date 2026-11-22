@@ -1,0 +1,1 @@
+package org.springframework.web.filter; import jakarta.servlet.*; import jakarta.servlet.http.*; public abstract class OncePerRequestFilter { protected abstract void doFilterInternal(HttpServletRequest a, HttpServletResponse b, FilterChain c) throws ServletException, java.io.IOException; }
