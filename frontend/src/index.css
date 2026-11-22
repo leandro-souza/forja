@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+
+@theme {
+  --color-ink: #0f1b2d;
+  --color-deck: #17263c;
+  --color-rail: #223654;
+  --color-line: #2e4566;
+  --color-chalk: #eef2f7;
+  --color-steel: #9db0ca;
+  --color-amber: #ffb020;
+  --color-mint: #3dd6b0;
+  --color-flare: #ff7a66;
+  --font-sans: "Barlow", system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Barlow", system-ui, sans-serif;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--color-ink);
+    color: var(--color-chalk);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+  h1, h2, h3, .display { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.005em; line-height: 1.1; }
+  input, select, textarea, button { font: inherit; color: inherit; }
+  input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  :focus-visible { outline: 2px solid var(--color-amber); outline-offset: 2px; }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-top { padding-top: env(safe-area-inset-top); }
+}
+
+@layer components {
+  .num { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; }
+}
+
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet-in { animation: sheet-up 0.18s ease-out; }
+@media (prefers-reduced-motion: reduce) { .sheet-in { animation: none; } }
