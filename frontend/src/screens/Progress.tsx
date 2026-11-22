@@ -217,7 +217,7 @@ export default function Progress({ go }: { go: (tab: any) => void }) {
               <button key={o.code} onClick={() => setFocus(o.code)} aria-pressed={chosenFocus === o.code}
                 className={`min-h-14 rounded-xl px-3 text-left font-medium border ${chosenFocus === o.code ? 'border-amber bg-amber/10 text-amber' : 'border-line'}`}>
                 {o.label}
-                {report?.suggestedFocus === o.code && <span className="block text-xs font-normal text-steel">Sugerido: foi o que menos evoluiu</span>}
+                {report?.suggestedFocus === o.code && <span className="block text-xs font-normal text-steel">Sugerido pelo sistema</span>}
                 {report?.focus === o.code && <span className="block text-xs font-normal text-steel">Foco atual</span>}
               </button>
             ))}
