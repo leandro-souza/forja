@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { api, fmtDate, TrainView } from '../api'
-import { Button, Card, Loading, LoadError, Meter, Notice, PageTitle, useLoad } from '../ui'
+import { api, fmtDate, TECHNIQUES, TrainView } from '../api'
+import { Button, Card, Loading, LoadError, Meter, Notice, PageTitle, Segmented, Sheet, useLoad } from '../ui'
 import Workout, { readDraft } from './Workout'
 
 export default function Train({ onWorkoutChange }: { onWorkoutChange: (active: boolean) => void }) {
@@ -9,6 +9,8 @@ export default function Train({ onWorkoutChange }: { onWorkoutChange: (active: b
   const [active, setActive] = useState<string | null>(null)
   const [justSaved, setJustSaved] = useState(false)
   const [showWhy, setShowWhy] = useState(false)
+  const [showPlan, setShowPlan] = useState(false)
+  const [planWorkout, setPlanWorkout] = useState('A')
 
   useEffect(() => { onWorkoutChange(active !== null); return () => onWorkoutChange(false) }, [active, onWorkoutChange])
 
@@ -51,6 +53,7 @@ export default function Train({ onWorkoutChange }: { onWorkoutChange: (active: b
             {showWhy ? 'Ocultar explicação' : 'Por que este protocolo é assim'}
           </button>
           {showWhy && <ul className="text-sm space-y-2 list-disc pl-5 text-chalk/90">{protocol.rationale.map((r) => <li key={r}>{r}</li>)}</ul>}
+          <Button kind="quiet" className="w-full mt-3" onClick={() => { setPlanWorkout(protocol.nextWorkout); setShowPlan(true) }}>Ver o plano completo das {protocol.weeks} semanas</Button>
         </Card>
 
         {workouts.map((w) => {
@@ -94,6 +97,34 @@ export default function Train({ onWorkoutChange }: { onWorkoutChange: (active: b
         )}
         <div className="pt-1"><Meter value={protocol.sessionsDone} max={protocol.sessionsTotal} tone="steel" /></div>
       </div>
+
+      <Sheet open={showPlan} onClose={() => setShowPlan(false)} title="Plano completo">
+        <p className="text-sm text-steel mb-3">Séries e repetições de cada exercício, semana a semana. Você avança de semana a cada 6 treinos registrados. Onde aparecem vários números, a carga sobe a cada série.</p>
+        <Segmented value={planWorkout} onChange={setPlanWorkout} options={workouts.map((w) => ({ value: w.code, label: `Treino ${w.code}` }))} />
+        {workouts.filter((w) => w.code === planWorkout).map((w) => (
+          <div key={w.code} className="mt-4 space-y-3">
+            <h3 className="text-xl">{w.title}</h3>
+            {w.items.map((it) => (
+              <div key={it.exercise.code} className="bg-rail rounded-xl p-3">
+                <div className="font-semibold leading-snug">{it.exercise.name}</div>
+                <ul className="mt-2 space-y-1">
+                  {it.weeks.map((wk) => (
+                    <li key={wk.week} className={`grid grid-cols-[1.25rem_5.5rem_1fr] gap-2 items-baseline text-sm rounded-md px-1.5 py-0.5 ${wk.week === protocol.week ? 'bg-amber/15 text-amber' : ''}`}>
+                      <span className="num text-base">{wk.week}</span>
+                      <span className={wk.week === protocol.week ? '' : 'text-steel'}>{wk.phase}</span>
+                      <span className="num text-base">
+                        {wk.scheme}
+                        {wk.technique && <span className="font-sans font-normal text-xs text-steel"> + {TECHNIQUES[wk.technique].label.toLowerCase()}</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ))}
+        <p className="text-xs text-steel mt-4">A semana destacada é a atual. Na semana de recuperação, use 20% menos carga.</p>
+      </Sheet>
     </div>
   )
 }

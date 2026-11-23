@@ -50,7 +50,9 @@ public class TrainingService {
 
     public record LastSet(double weight, int reps) {}
 
-    public record ItemView(ExerciseView exercise, String technique, Plan.Rx rx, List<LastSet> last, List<ExerciseView> alternatives) {}
+    public record WeekPlan(int week, String phase, String scheme, String technique) {}
+
+    public record ItemView(ExerciseView exercise, String technique, Plan.Rx rx, List<LastSet> last, List<ExerciseView> alternatives, List<WeekPlan> weeks) {}
 
     public record WorkoutView(String code, String title, List<String> warmup, String cardio, int totalSets, LocalDate lastDone, List<ItemView> items) {}
 
@@ -68,6 +70,21 @@ public class TrainingService {
 
     public static ExerciseView view(Exercise e) {
         return new ExerciseView(e.code(), e.name(), e.group(), ExerciseCatalog.label(e.group()), e.img(), e.compound(), e.cue());
+    }
+
+    /** Resumo da prescricao de um item em cada semana do protocolo, para a tela de plano completo. */
+    private static List<WeekPlan> weeks(Plan.Item item, List<Phase> phases) {
+        List<WeekPlan> out = new ArrayList<>();
+        for (int i = 0; i < phases.size(); i++) {
+            Plan.Rx rx = ProtocolEngine.prescribe(item, phases.get(i), null);
+            List<String> reps = rx.sets().stream().map(Plan.SetRx::reps).toList();
+            boolean same = reps.stream().distinct().count() == 1;
+            String unit = "ISO".equals(rx.cadence()) ? " s" : "";
+            String scheme = same ? reps.size() + " × " + reps.get(0) + unit : String.join(" / ", reps);
+            String technique = rx.sets().get(rx.sets().size() - 1).technique();
+            out.add(new WeekPlan(i + 1, phases.get(i).label, scheme, technique));
+        }
+        return out;
     }
 
     public Optional<Protocol> current(Long userId) {
@@ -144,7 +161,7 @@ public class TrainingService {
                 totalSets += rx.sets().size();
                 List<ExerciseView> alternatives = ExerciseCatalog.ofGroup(ex.group()).stream()
                         .filter(a -> !a.code().equals(ex.code()) && a.spine() <= (backPain ? 2 : 3)).limit(4).map(TrainingService::view).toList();
-                items.add(new ItemView(view(ex), item.technique(), rx, last, alternatives));
+                items.add(new ItemView(view(ex), item.technique(), rx, last, alternatives, weeks(item, plan.phases())));
             }
             LocalDate lastDone = done.stream().filter(s -> w.code().equals(s.getWorkoutCode())).map(SessionLog::getDate).reduce((a, b) -> b).orElse(null);
             views.add(new WorkoutView(w.code(), w.title(), w.warmup(), w.cardio(), totalSets, lastDone, items));

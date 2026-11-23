@@ -3,7 +3,8 @@
 export interface Exercise { code: string; name: string; group: string; groupLabel: string; img: string; compound: boolean; cue: string }
 export interface SetRx { n: number; reps: string; repLow: number; repHigh: number; technique: string | null; suggestedKg: number | null }
 export interface Rx { sets: SetRx[]; cadence: string; restSec: number; rir: number }
-export interface Item { exercise: Exercise; technique: string | null; rx: Rx; last: { weight: number; reps: number }[]; alternatives: Exercise[] }
+export interface WeekPlan { week: number; phase: string; scheme: string; technique: string | null }
+export interface Item { exercise: Exercise; technique: string | null; rx: Rx; last: { weight: number; reps: number }[]; alternatives: Exercise[]; weeks: WeekPlan[] }
 export interface Workout { code: string; title: string; warmup: string[]; cardio: string | null; totalSets: number; lastDone: string | null; items: Item[] }
 export interface PhaseView { code: string; label: string; guidance: string; rir: number }
 export interface ProtocolView {
