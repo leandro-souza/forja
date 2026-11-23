@@ -22,4 +22,5 @@ ENV TZ=America/Bahia
 WORKDIR /app
 COPY --from=api /app/target/forja.jar forja.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=70", "-XX:+UseSerialGC", "-Duser.timezone=America/Bahia", "-jar", "forja.jar"]
+# Monta a URL JDBC a partir de DB_HOST/DB_PORT/DB_NAME quando o banco e fornecido pela plataforma
+ENTRYPOINT ["sh", "-c", "if [ -n \"$DB_HOST\" ]; then export JDBC_DATABASE_URL=\"jdbc:postgresql://$DB_HOST:${DB_PORT:-5432}/$DB_NAME\"; fi; exec java -XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Duser.timezone=America/Bahia -jar forja.jar"]

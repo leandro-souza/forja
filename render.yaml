@@ -1,0 +1,35 @@
+# Infraestrutura do Forja no Render: um servico web (Docker) e um PostgreSQL.
+databases:
+  - name: forja-db
+    plan: free
+    region: virginia
+    postgresMajorVersion: "16"
+
+services:
+  - type: web
+    name: forja
+    runtime: docker
+    plan: free
+    region: virginia
+    healthCheckPath: /api/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: forja-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: forja-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: forja-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: forja-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: forja-db
+          property: password
